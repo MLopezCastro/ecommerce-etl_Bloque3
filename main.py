@@ -56,10 +56,21 @@ def main(orders_path, customers_path, output_path, output_format):
         allowed_status(df)
         date_not_future(df, "order_date")
 
-        # Exportar
-        export_df(df, Path(output_path), output_format)
+        # Exportar en tres formatos
+        output_path = Path(output_path)
+
+        # Exportar CSV
+        export_df(df, output_path.with_suffix(".csv"), "csv")
+
+        # Exportar Parquet sin compresión
+        export_df(df, output_path.with_suffix(".parquet"), "parquet")
+
+        # Exportar Parquet con compresión Snappy
+        export_df(df, output_path.with_name(output_path.stem + ".snappy.parquet"), "parquet", compression="snappy")
+
         logging.info("Proceso ETL finalizado exitosamente.")
-        print("✅ Proceso completado. Archivo exportado a:", output_path)
+        print("✅ Proceso completado. Archivos exportados en tres formatos.")
+
 
     except Exception as e:
         logging.error(f"Error en el proceso ETL: {e}")
